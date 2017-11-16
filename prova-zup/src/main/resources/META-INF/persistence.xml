@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+	version="2.1">
+
+
+	<persistence-unit name="LocalDSPU" transaction-type="JTA">
+
+		<jta-data-source>java:jboss/datasources/LocalDS</jta-data-source>
+
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+		<properties>
+			<!-- AUTO DETECTION -->
+			<property name="hibernate.archive.autodetection" value="class" />
+
+			<!-- DADOS DA CONEXAO -->
+			<property name="hibernate.connection.datasource" value="java:jboss/datasources/LocalDS" />
+
+			<!-- OUTROS -->
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="hibernate.connection.autocommit" value="false" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="current_session_context_class" value="jta" />
+		</properties>
+
+	</persistence-unit>
+
+
+</persistence>

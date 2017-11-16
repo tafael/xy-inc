@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:sc="http://br.com.schooler"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+	<p:dialog id="dialogMessages" style="min-width: 300px; max-width: 500px;" widgetVar="dlgMessages" header="#{MessagesMB.title}" modal="true" closable="false" draggable="false" resizable="false" closeOnEscape="false">
+		<h:form id="formMessages">
+			<div class="conteudo-dialog-scrollable" style="max-height: 500px;">
+				<h:outputText value="#{MessagesMB.message}" escape="false" />
+			</div>
+
+			<hr />
+			
+			<div class="rodape-dialog">
+				<h:outputLink styleClass="btn" value="javascript:void(0)" onclick="PF('dlgMessages').hide();">Fechar</h:outputLink>
+			</div>
+		</h:form>
+	</p:dialog>
+	
+	
+	
+	<p:dialog id="dialogConfirmation" style="min-width: 300px; max-width: 500px;" widgetVar="dlgConfirmation" header="#{MessagesMB.title}" modal="true" closable="false" draggable="false" resizable="false" closeOnEscape="false">
+		<h:form id="formConfirmation">
+		
+			<div class="conteudo-dialog-scrollable" style="max-height: 500px;">
+				<h:outputText value="#{MessagesMB.message}" escape="false" />
+			</div>
+
+			<hr />
+			
+			<div class="rodape-dialog">
+	
+				<!-- Cancel -->
+				<p:commandLink styleClass="btn" action="#{MessagesMB.executeCancel()}" value="Cancelar" />
+	
+				
+				<!-- Confirm -->
+				<p:commandLink styleClass="btn btn-primario" action="#{MessagesMB.executeConfirm()}" value="Confirmar" />
+
+			</div>
+
+		</h:form>
+	</p:dialog>
+	
+</ui:composition>
