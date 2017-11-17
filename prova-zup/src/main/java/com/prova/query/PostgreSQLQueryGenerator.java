@@ -167,7 +167,7 @@ public class PostgreSQLQueryGenerator implements QueryGenerator {
 				sep = ",";
 			}
 			// sql.append(sep + extractColumnValue(table.getTableId(), entity));
-			sql.append(") returning id ");
+			sql.append(") returning " + table.getTableId().getName());
 		}
 		return sql.toString();
 	}
