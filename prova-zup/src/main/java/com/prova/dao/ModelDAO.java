@@ -1,6 +1,7 @@
 package com.prova.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,12 @@ public class ModelDAO extends GenericDAOImpl<Model, Long> implements GenericDAO<
 	public void executeSQL(String sql) {
 		openSession().createSQLQuery(sql).executeUpdate();
 	}
+	
+	public void executeSQL(List<String> sqls) {
+		for (String sql : sqls) {
+			executeSQL(sql);
+		}
+	}
 
 	public Map<String, Object> findDataById(Model model, Long id) {
 		List<Map<String, Object>> params = new ArrayList<Map<String, Object>>();
@@ -38,6 +45,24 @@ public class ModelDAO extends GenericDAOImpl<Model, Long> implements GenericDAO<
 		String sql = queryGenerator.generateSelect(model, null);
 		SQLQuery query = openSession().createSQLQuery(sql);
 		return ResultExtractor.extractResult(model, query.list());
+	}
+
+	public Map<String, Object> insertData(Model model, Map<String, Object> data) {
+		List<Map<String, Object>> entities = new ArrayList<Map<String, Object>>();
+		entities.add(data);
+		String sql = queryGenerator.generateInsert(model, entities);
+		SQLQuery query = openSession().createSQLQuery(sql);
+		return ResultExtractor.setGeneratedId(model, data, (Object) query.uniqueResult());
+	}
+	
+	public void updateData(Model model, Map<String, Object> data) {
+		List<Map<String, Object>> entities = new ArrayList<Map<String, Object>>();
+		entities.add(data);
+		executeSQL(queryGenerator.generateUpdate(model, entities));
+	}
+	
+	public void deleteData(Model model, Object id) {
+		executeSQL(queryGenerator.generateDelete(model, Arrays.asList(new Object[] {id})));
 	}
 
 }

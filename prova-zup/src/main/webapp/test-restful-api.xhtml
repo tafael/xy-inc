@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="content-language" content="pt-br" />
+		<title>Prova Zup - Teste RESTful API</title>
+	</f:facet>
+</h:head>
+<h:body>
+	<h1>Prova Zup - Tafael Alves Caixeta</h1>
+	<br />
+
+
+	<h2>Testar RESTful API - #{TestRestMB.model.name}</h2>
+	
+	<div>
+		<p:commandLink styleClass="btn" value="Nova linha" action="#{TestRestMB.newData()}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit"  />
+	</div>
+
+	<h:form id="form">
+
+		<p:dataTable value="#{TestRestMB.dataList}" var="data">
+
+			<p:columnGroup type="header">
+				<p:row>
+					<c:forEach var="field" items="#{TestRestMB.model.fields}">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{field.name}" />
+							</f:facet>
+						</p:column>
+					</c:forEach>
+					<p:column headerText="Editar" />
+				</p:row>
+			</p:columnGroup>
+
+			<c:forEach var="field" items="#{TestRestMB.model.fields}" varStatus="status">
+				<p:column>
+					<h:outputText value="#{data.get(field.name)}" />
+				</p:column>
+			</c:forEach>
+			
+			<p:column>
+				<p:commandLink value="Editar" action="#{TestRestMB.edit(data)}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit" />
+			</p:column>
+
+		</p:dataTable>
+		
+	</h:form>
+	
+			
+	<p:dialog id="dialogEdit" width="800px" widgetVar="dlgEdit" header="#{TestRestMB.editing ? 'Editar Dados' : 'Novos Dados'}" dynamic="true" modal="true" draggable="false" resizable="false">
+		<h:form id="formEdit">
+			<div class="conteudo-dialog-scrollable">
+				<div>
+					<c:forEach var="field" items="#{TestRestMB.model.fields}">
+						<c:if test="#{TestRestMB.model.tableId.id != field.id}">
+							<div style="margin-top: 20px;">
+								<h:outputText value="#{field.name}:" />
+							</div>
+							<div style="margin-top: 10px;">
+								<p:inputText value="#{TestRestMB.data[field.name]}" size="30" rendered="#{field.type == 'CHARACTER'}" />
+								<p:calendar value="#{TestRestMB.data[field.name]}" size="30" rendered="#{field.type == 'DATE'}" pattern="dd/MM/yyyy" mask="true" />
+								<p:calendar value="#{TestRestMB.data[field.name]}" size="30" rendered="#{field.type == 'TIMESTAMP'}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" />
+								<p:inputNumber value="#{TestRestMB.data[field.name]}" size="30" decimalPlaces="0" thousandSeparator="" rendered="#{field.type == 'INTEGER'}" />
+								<p:inputNumber value="#{TestRestMB.data[field.name]}" size="30" decimalPlaces="2" thousandSeparator="" decimalSeparator="." rendered="#{field.type == 'DECIMAL'}" />
+							</div>						
+						</c:if>
+					</c:forEach>
+					
+				</div>
+			</div>
+			<hr />
+			<div class="rodape-dialog">
+				<p:commandLink styleClass="btn-excluir" value="Excluir" action="#{TestRestMB.confirmDelete()}" rendered="#{TestRestMB.editing}" />
+				<h:outputLink styleClass="btn" value="javascript:void(0)" onclick="PF('dlgEdit').hide()">Cancelar</h:outputLink>
+				<p:commandLink styleClass="btn btn-primario" action="#{TestRestMB.confirmSave()}" value="Salvar" />
+			</div>
+		</h:form>
+	</p:dialog>
+	
+	<ui:include src="/facelet/messages.xhtml" />
+
+</h:body>
+
+</html>

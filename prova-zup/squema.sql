@@ -17,7 +17,7 @@ create table field (
 	name character varying (255) not null,
 	type character varying (255) not null,
 	size integer not null,
-	not_null boolean not null default false;
+	not_null boolean not null default false,
 	id_model integer not null,
 	creation_date timestamp with time zone default now(),
 	update_date timestamp with time zone default now(),

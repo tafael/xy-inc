@@ -28,5 +28,20 @@ public class ResultExtractor {
 		}
 		return results;
 	}
+	
+	public static Map<String, Object> setGeneratedId(Model model, Map<String, Object> entity, Object _result) {
+		if (_result == null) return entity;
+		entity.put(model.getTableId().getName(), _result);
+		return entity;
+	}
+
+	public static List<Map<String, Object>> setGeneratedId(Model model, List<Map<String, Object>> entities, Object[] _result) {
+		if (_result == null) return entities;
+		int i = 0;
+		for (Map<String, Object> entity : entities) {
+			setGeneratedId(model, entity, _result[i++]);
+		}
+		return entities;
+	}
 
 }

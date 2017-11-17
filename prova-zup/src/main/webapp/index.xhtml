@@ -4,15 +4,128 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:sc="http://br.com.schooler">
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
 <h:head>
+	<f:facet name="first">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="content-language" content="pt-br" />
+		<title>Prova Zup</title>
+	</f:facet>
 </h:head>
 <h:body>
-	<h2>Prova Zup</h2>
-	<h:form>
-		...
+	<h1>Prova Zup - Tafael Alves Caixeta</h1>
+	<br />
+
+
+	<h2>Modelos</h2>
+
+	<h:form id="form">
+	
+		<div>
+			<p:commandLink styleClass="btn" value="Novo" action="#{ModelsMB.newModel()}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit"  />
+		</div>
+	
+		<p:dataTable emptyMessage="Nenhum modelo." value="#{ModelsMB.models}" var="model" rows="10" paginator="true" paginatorPosition="top">
+			<p:column headerText="Nome Modelo">#{model.name}</p:column>
+			<p:column headerText="Testar API RESTfull">
+				<h:outputLink value="#{request.contextPath}/faces/test-restful-api.xhtml?model=#{model.id}" target="_blank">testar API</h:outputLink>
+			</p:column>
+			<p:column headerText="Editar">
+				<p:commandLink value="Editar" action="#{ModelsMB.editModel(model)}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit" />
+			</p:column>
+		</p:dataTable>
+
 	</h:form>
+
+	<p:dialog id="dialogEdit" width="800px"  widgetVar="dlgEdit" header="#{ModelsMB.editing ? 'Editar '.concat(ModelsMB.model.name) : 'Novo Modelo'}" dynamic="true" modal="true" draggable="false" resizable="false">
+		<h:form id="formEdit">
+			<div class="conteudo-dialog-scrollable">
+				<div>
+					<div style="margin-top: 20px;">
+						<h:outputText value="Nome:" />
+					</div>
+					<div style="margin-top: 10px;">
+						<p:inputText value="#{ModelsMB.model.name}" size="50" />
+					</div>
+					
+					<div>
+						<p:commandLink styleClass="btn" value="Novo Campo" action="#{ModelsMB.newField()}" oncomplete="PF('dlgEditField').show()" update=":dialogEditField"  />
+					</div>
+					
+					<p:dataTable emptyMessage="Nenhum campo" value="#{ModelsMB.model.fields}" var="field" rows="10" paginator="true" paginatorPosition="top">
+						<f:facet name="header">Campos</f:facet>
+						
+						<p:column headerText="Nome">#{field.name}</p:column>
+						
+						<p:column headerText="Tipo">#{field.type}</p:column>
+						
+						<p:column headerText="Tamanho">#{field.size}</p:column>
+						
+						<p:column headerText="Editar">
+							<p:commandLink styleClass="btn" value="Editar" action="#{ModelsMB.editField(field)}" oncomplete="PF('dlgEditField').show()" update=":dialogEditField"  />
+						</p:column>
+					</p:dataTable>
+					
+				</div>
+			</div>
+			<hr />
+			<div class="rodape-dialog">
+				<p:commandLink styleClass="btn-excluir" value="Excluir" action="#{ModelsMB.confirmDelete()}" rendered="#{ModelsMB.editing}" />
+				<h:outputLink styleClass="btn" value="javascript:void(0)" onclick="PF('dlgEdit').hide()">Cancelar</h:outputLink>
+				<p:commandLink styleClass="btn btn-primario" action="#{ModelsMB.confirmSave()}" value="Salvar" />
+			</div>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="dialogEditField" width="800px"  widgetVar="dlgEditField" header="#{ModelsMB.editingField ? 'Editar Campo: '.concat(ModelsMB.field.name) : 'Novo Campo'}" dynamic="true" modal="true" draggable="false" resizable="false">
+		<h:form id="formEditField">
+			<div class="conteudo-dialog-scrollable">
+				<div>
+					<div style="margin-top: 20px;">
+						<h:outputText value="Nome:" />
+					</div>
+					<div style="margin-top: 10px;">
+						<p:inputText value="#{ModelsMB.field.name}" size="50" />
+					</div>
+					
+					<div style="margin-top: 20px;">
+						<h:outputText value="Tipo:" />
+					</div>
+					<div style="margin-top: 10px;">
+						<p:selectOneMenu value="#{ModelsMB.field.type}">
+							<f:selectItems value="#{ModelsMB.types}" var="type" itemLabel="#{type}" itemValue="#{type}" />
+						</p:selectOneMenu>
+					</div>
+					
+					<div style="margin-top: 20px;">
+						<h:outputText value="Tamanho:" />
+					</div>
+					<div style="margin-top: 10px;">
+						<p:inputText value="#{ModelsMB.field.size}" size="50" />
+					</div>
+					
+					<div style="margin-top: 20px;">
+						<h:outputText value="Obrigatório:" />
+					</div>
+					<div style="margin-top: 10px;">
+						<p:selectBooleanCheckbox value="#{ModelsMB.field.notNull}" />
+					</div>
+					
+				</div>
+			</div>
+			<hr />
+			<div class="rodape-dialog">
+				<p:commandLink styleClass="btn-excluir" value="Excluir" action="#{ModelsMB.removeField()}" rendered="#{ModelsMB.editingField}" />
+				<h:outputLink styleClass="btn" value="javascript:void(0)" onclick="PF('dlgEditField').hide()">Cancelar</h:outputLink>
+				<p:commandLink styleClass="btn btn-primario" action="#{ModelsMB.addField()}" value="Adicionar Campo" rendered="#{!ModelsMB.editingField}" />
+				<p:commandLink styleClass="btn btn-primario" action="#{ModelsMB.confirmField()}" value="Confirmar" rendered="#{ModelsMB.editingField}" />
+			</div>
+		</h:form>
+	</p:dialog>
+	
+	<ui:include src="/facelet/messages.xhtml" />
+	
+
 </h:body>
 </html>
 

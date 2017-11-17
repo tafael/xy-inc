@@ -107,6 +107,7 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- JSF -->
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
@@ -126,12 +127,18 @@
 			<artifactId>primefaces</artifactId>
 			<version>6.1</version>
 		</dependency>
+		
+		<!-- Omnifaces -->
+		<dependency>
+		    <groupId>org.omnifaces</groupId>
+		    <artifactId>omnifaces</artifactId>
+		    <version>2.0</version>
+		</dependency>
 
 		<!-- JDBC drivers -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<!-- <version>9.3-1100-jdbc41</version> -->
 			<version>9.2-1002-jdbc4</version>
 			<scope>provided</scope>
 		</dependency>

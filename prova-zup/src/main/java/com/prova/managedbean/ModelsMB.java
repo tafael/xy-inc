@@ -121,7 +121,7 @@ public class ModelsMB implements Serializable {
 	}
 
 	public void confirmDelete() {
-		messagesMB.showConfirmation("Excluir Modelo", "Deseja realmente excluir esta modelo?", null, "#{ModelsMB.delete()}");
+		messagesMB.showConfirmation("Excluir Modelo", "Deseja realmente excluir este modelo?", null, "#{ModelsMB.delete()}");
 	}
 
 	public void delete() {

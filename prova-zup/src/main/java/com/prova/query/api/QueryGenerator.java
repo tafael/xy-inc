@@ -17,6 +17,6 @@ public interface QueryGenerator {
 
 	String generateUpdate(Model table, List<Map<String, Object>> entities);
 
-	String generateDelete(Model table, List<Map<String, Object>> entities);
+	List<String> generateDelete(Model table, List<Object> ids);
 
 }

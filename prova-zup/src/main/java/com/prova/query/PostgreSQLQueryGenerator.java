@@ -23,9 +23,9 @@ public class PostgreSQLQueryGenerator implements QueryGenerator {
 	private String getColumnStatement(Field column) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(column.getName() + " ");
-		sb.append(column.getType().sqlStatement);
+		sb.append(column.getType().sqlStatement + " ");
 		if (column.getType() == TypeEnum.CHARACTER && column.getSize() != null) {
-			sb.append("(" + column.getSize() + ")");
+			sb.append("(" + column.getSize() + ") ");
 		}
 		if (column.getNotNull()) {
 			sb.append("not null");
@@ -135,6 +135,7 @@ public class PostgreSQLQueryGenerator implements QueryGenerator {
 		String sep = "";
 		sql.append("insert into " + table.getName() + "(");
 		for (Field column : table.getFields()) {
+			if (table.getTableId().equals(column)) continue;
 			sql.append(sep + column.getName());
 			sep = ",";
 		}
@@ -144,6 +145,7 @@ public class PostgreSQLQueryGenerator implements QueryGenerator {
 
 		for (Map<String, Object> entity : entities) {
 			for (Field column : table.getFields()) {
+				if (table.getTableId().equals(column)) continue;
 				sql.append(sep + extractColumnValue(column, entity));
 				sep = ",";
 			}
@@ -161,6 +163,7 @@ public class PostgreSQLQueryGenerator implements QueryGenerator {
 		for (Map<String, Object> entity : entities) {
 			sql.append("update " + table.getName() + " set ");
 			for (Field column : table.getFields()) {
+				if (table.getTableId().equals(column)) continue;
 				sql.append(sep + column.getName());
 				sql.append("=");
 				sql.append(extractColumnValue(column, entity));
@@ -176,12 +179,12 @@ public class PostgreSQLQueryGenerator implements QueryGenerator {
 	}
 
 	@Override
-	public String generateDelete(Model table, List<Map<String, Object>> entities) {
-		StringBuilder sql = new StringBuilder();
-		for (Map<String, Object> entity : entities) {
-			sql.append("delete from " + table.getName() + " where " + table.getTableId().getName() + " = " + extractColumnValue(table.getTableId(), entity) + ";");
+	public List<String> generateDelete(Model table, List<Object> ids) {
+		List<String> deleteStatements = new ArrayList<String>();
+		for (Object id : ids) {
+			deleteStatements.add("delete from " + table.getName() + " where " + table.getTableId().getName() + "=" + getSQLFormattedValue(id));
 		}
-		return sql.toString();
+		return deleteStatements;
 	}
 
 }

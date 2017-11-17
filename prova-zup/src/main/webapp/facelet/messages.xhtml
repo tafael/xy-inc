@@ -1,7 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:sc="http://br.com.schooler"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
@@ -43,6 +42,11 @@
 			</div>
 
 		</h:form>
+	</p:dialog>
+	
+	<p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" />
+	<p:dialog showHeader="false" modal="true" widgetVar="loadingDialog" draggable="false" resizable="false" closable="false" width="90px" height="60px" style="background-color:#fff">
+		<p:graphicImage value="/resources/images/loading.gif"  />
 	</p:dialog>
 	
 </ui:composition>

@@ -5,7 +5,8 @@ public enum TypeEnum {
 	INTEGER("integer"),
 	CHARACTER("character varying"),
 	TIMESTAMP("timestamp"),
-	DATE("date");
+	DATE("date"),
+	DECIMAL("decimal");
 	
 	public final String sqlStatement;
 	

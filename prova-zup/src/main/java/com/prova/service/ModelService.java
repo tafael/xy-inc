@@ -28,6 +28,8 @@ public class ModelService extends GenericService<Model, Long> implements Seriali
 	@Inject
 	private FieldService fieldService;
 
+	private QueryGenerator generator = QueryGeneratorFactory.getQueryGenerator();
+
 	public Model saveModel(Model model) {
 		if (model.getId() != null) {
 			Model oldModel = findById(model.getId());
@@ -40,11 +42,7 @@ public class ModelService extends GenericService<Model, Long> implements Seriali
 			newModel.setFields(fieldService.findByModel(newModel));
 			
 			// atualiza a tabela do modelo.
-			QueryGenerator generator = QueryGeneratorFactory.getQueryGenerator();
-			List<String> statements = generator.generateAlterTable(oldModel, newModel);
-			for (String statement : statements) {
-				modelDAO.executeSQL(statement);
-			}
+			modelDAO.executeSQL(generator.generateAlterTable(oldModel, newModel));
 			
 			return newModel;
 		} else {
@@ -66,11 +64,7 @@ public class ModelService extends GenericService<Model, Long> implements Seriali
 			}
 			
 			// cria a tabela para o novo modelo.
-			QueryGenerator generator = QueryGeneratorFactory.getQueryGenerator();
-			List<String> statements = generator.generateCreateTable(model);
-			for (String statement : statements) {
-				modelDAO.executeSQL(statement);
-			}
+			modelDAO.executeSQL(generator.generateCreateTable(model));
 
 			return newModel;
 		}
@@ -82,6 +76,20 @@ public class ModelService extends GenericService<Model, Long> implements Seriali
 
 	public List<Map<String, Object>> findAllData(Model model) {
 		return modelDAO.findAllData(model);
+	}
+	
+
+	public Map<String, Object> insertData(Model model, Map<String, Object> data) {
+		return modelDAO.insertData(model, data);
+	}
+	
+	public void updateData(Model model, Map<String, Object> data) {
+		modelDAO.updateData(model, data);
+	}
+	
+	public void deleteData(Model model, Object id) {
+		modelDAO.deleteData(model, id);
+		
 	}
 
 	@Override
