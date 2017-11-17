@@ -1,8 +1,10 @@
-A arquitetura proposta foi seguinte:
+A arquitetura proposta foi a seguinte:
   * Para cada modelo criado pelo desenvolvedor, é salvo os metadados do modelo em duas tabelas do banco de dados, uma com o modelo e outra com os campos pertencentes ao modelo.
   * Para cada metadado inserido é criada uma tabela que corresponde ao modelo inserido.
   * A partir dos metadados e da tabela criada é possível mapear com uma API RESTful as operações básicas CRUD para cada modelo inserido.
   * O sistema utiliza as informações dos metadados tanto para gerar as consultas SQL automaticamente (SELECT, INSERT, UPDATE e DELETE), quanto para mapear as requisições http na API RESTful.
+  * Sistema desenvolvido em JAVA.
+  * Tecnologias utilizadas: PostgreSQL, WildFly 8 (Java EE 7), Maven, Hibernate, JSF, JAX-RS WS.
 
 Para executar a aplicação (Windows):
 
@@ -90,4 +92,4 @@ Para executar a aplicação (Windows):
 - Execute o goal maven install no projeto (botao direito encima do projeto -> Debug As -> Maven Install ).
 - Na View Servers ( botão direito encima do Wildfly -> Add and Remove... -> Add ) adicione o projeto ao Wildfly.
 - Na View Servers execute o Wildfly pelo eclipse (icone com um inseto, modo debug).
-
+- acessar http://localhost:8080/prova-zup/ (caso nao utilize a porta 8080, trocar o número da porta da url)
