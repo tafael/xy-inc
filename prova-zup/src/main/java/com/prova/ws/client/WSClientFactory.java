@@ -21,7 +21,7 @@ public final class WSClientFactory {
 		if (webtargetAnnotation == null) {
 			throw new ResteasyClientException("'com.prova.ws.client.annotation.WebTarget' indefinido para o WebService: " + clazz.getName());
 		} else {
-			webTargetPath = Config.HOST_URL + Config.WS_APPLICATION_PATH + webtargetAnnotation.value();
+			webTargetPath = "http://" + Config.HOST_URL + Config.WS_APPLICATION_PATH + webtargetAnnotation.value();
 		}
 		ResteasyWebTarget target = client.target(webTargetPath);
 		

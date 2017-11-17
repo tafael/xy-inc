@@ -92,4 +92,5 @@ Para executar a aplicação (Windows):
 - Execute o goal maven install no projeto (botao direito encima do projeto -> Debug As -> Maven Install ).
 - Na View Servers ( botão direito encima do Wildfly -> Add and Remove... -> Add ) adicione o projeto ao Wildfly.
 - Na View Servers execute o Wildfly pelo eclipse (icone com um inseto, modo debug).
-- acessar http://localhost:8080/prova-zup/ (caso nao utilize a porta 8080, trocar o número da porta da url)
+- acessar http://localhost:8080/prova-zup/
+- (caso utilize outra porta que não seja 8080, trocar a propriedade "host_url" no arquivo "config.properties" colocando a porta utilizada, pois o sistema depende desta propriedade para acessar a API RESTful internamente. )
