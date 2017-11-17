@@ -11,27 +11,36 @@
 		<meta http-equiv="content-language" content="pt-br" />
 		<title>Prova Zup</title>
 	</f:facet>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/css/style.css" />
+	
 </h:head>
 <h:body>
 	<h1>Prova Zup - Tafael Alves Caixeta</h1>
 	<br />
 
-
-	<h2>Modelos</h2>
+	<div class="mural mural-explicativo">
+		<h4>Esta tela possibilita a inserção dos modelos à serem mapeados para API RESTful.</h4><br/>
+		
+		<span>Primeiro crie os modelos, depois teste a API de cada modelo criado. Desenvolvido por Tafael Alves Caixeta. Código fonte: <a href="https://github.com/tafael/xy-inc" target="_blank">github</a></span>
+	</div>
+	
 
 	<h:form id="form">
 	
-		<div>
-			<p:commandLink styleClass="btn" value="Novo" action="#{ModelsMB.newModel()}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit"  />
-		</div>
-	
 		<p:dataTable emptyMessage="Nenhum modelo." value="#{ModelsMB.models}" var="model" rows="10" paginator="true" paginatorPosition="top">
-			<p:column headerText="Nome Modelo">#{model.name}</p:column>
-			<p:column headerText="Testar API RESTfull">
-				<h:outputLink value="#{request.contextPath}/faces/test-restful-api.xhtml?model=#{model.id}" target="_blank">testar API</h:outputLink>
+			<f:facet name="header">
+				Modelos	
+				<div style="float: right;">
+					<p:commandLink styleClass="btn" value="Novo" action="#{ModelsMB.newModel()}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit"  />
+				</div>
+				<div style="clear: both;" />
+			</f:facet>
+			<p:column headerText="Testar API" width="100">
+				<h:outputLink styleClass="btn btn-primario" value="#{request.contextPath}/faces/test-restful-api.xhtml?model=#{model.id}" target="_blank">testar API</h:outputLink>
 			</p:column>
-			<p:column headerText="Editar">
-				<p:commandLink value="Editar" action="#{ModelsMB.editModel(model)}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit" />
+			<p:column headerText="Nome Modelo">#{model.name}</p:column>
+			<p:column headerText="Editar" width="70">
+				<p:commandLink styleClass="btn" value="Editar" action="#{ModelsMB.editModel(model)}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit" />
 			</p:column>
 		</p:dataTable>
 
@@ -48,12 +57,14 @@
 						<p:inputText value="#{ModelsMB.model.name}" size="50" />
 					</div>
 					
-					<div>
-						<p:commandLink styleClass="btn" value="Novo Campo" action="#{ModelsMB.newField()}" oncomplete="PF('dlgEditField').show()" update=":dialogEditField"  />
-					</div>
-					
-					<p:dataTable emptyMessage="Nenhum campo" value="#{ModelsMB.model.fields}" var="field" rows="10" paginator="true" paginatorPosition="top">
-						<f:facet name="header">Campos</f:facet>
+					<p:dataTable style="margin-top: 20px;" emptyMessage="Nenhum campo" value="#{ModelsMB.model.fields}" var="field" rows="10" paginator="true" paginatorPosition="top">
+						<f:facet name="header">
+							Campos
+							<div style="float: right;">
+								<p:commandLink styleClass="btn" value="Novo Campo" action="#{ModelsMB.newField()}" oncomplete="PF('dlgEditField').show()" update=":dialogEditField"  />
+							</div>
+							<div style="clear: both;" />
+						</f:facet>
 						
 						<p:column headerText="Nome">#{field.name}</p:column>
 						
@@ -61,7 +72,7 @@
 						
 						<p:column headerText="Tamanho">#{field.size}</p:column>
 						
-						<p:column headerText="Editar">
+						<p:column headerText="Editar" width="70">
 							<p:commandLink styleClass="btn" value="Editar" action="#{ModelsMB.editField(field)}" oncomplete="PF('dlgEditField').show()" update=":dialogEditField"  />
 						</p:column>
 					</p:dataTable>

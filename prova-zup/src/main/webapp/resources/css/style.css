@@ -1,0 +1,112 @@
+.mural-explicativo {
+	background: #d9edf7;
+	padding: 25px;
+	margin: 0px 30px 30px 30px;
+}
+
+.mural-explicativo>span {
+	text-indent: 19px;
+	line-height: 20px;
+	display: inline-block;
+}
+
+hr {
+	height: 1px;
+	background: #ededed;
+	margin: 0px;
+	border: none;
+}
+
+/** Componente Dialog */
+.ui-dialog.ui-widget-content .ui-dialog-content {
+	font-size: inherit;
+	padding: 0px;
+}
+
+.conteudo-dialog {
+	padding: 15px;
+}
+
+.conteudo-dialog-scrollable {
+	padding: 15px;
+	max-height: 350px;
+	overflow: auto;
+}
+
+.rodape-dialog {
+	text-align: right;
+	background: #f5f5f5;
+	height: 50px;
+	line-height: 50px;
+	padding: 5px 15px;
+}
+
+.rodape-dialog a {
+	margin-left: 10px;
+}
+
+
+/** botoes */
+.btn,
+.ui-widget .btn {
+	display: inline-block;
+	line-height: 25px;
+	background: white;
+	border: solid 1px #ccc;
+	color: #4F4F4F;
+	text-decoration: none;
+	text-align: center;
+	font-size: 14px;
+	padding: 4px 15px;
+}
+
+.btn:hover {
+	background: #F1F1F1;
+	border: solid 1px #adadad;
+}
+
+.btn.disabled{
+	background: white;
+	border: solid 1px #ccc;
+	color: #ACACAC;
+}
+
+.btn.disabled:hover{
+	background: white;
+	border: solid 1px #ccc;
+	color: #ACACAC;
+}
+
+.ui-state-disabled.btn:hover{
+	background: white;
+	border: solid 1px #ccc;
+}
+.ui-state-disabled.btn-primario:hover,
+.ui-state-disabled.btn.btn-primario:hover{
+	background: #428bca;
+	border: solid 1px #ccc;
+}
+
+.btn-excluir {
+	color: #333;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.btn-excluir:hover {
+	text-decoration: underline;
+}
+
+.btn-primario,
+.ui-widget-content .btn-primario,
+.btn.btn-primario {
+	color: #fff;
+	background-color: #428bca;
+	border-color: #357ebd;
+}
+
+.btn-primario:hover {
+	color: #fff;
+	background-color: #3276b1;
+	border-color: #285e8e;
+}

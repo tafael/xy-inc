@@ -12,24 +12,47 @@
 		<meta http-equiv="content-language" content="pt-br" />
 		<title>Prova Zup - Teste RESTful API</title>
 	</f:facet>
+	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/css/style.css" />
 </h:head>
 <h:body>
 	<h1>Prova Zup - Tafael Alves Caixeta</h1>
 	<br />
 
-
-	<h2>Testar RESTful API - #{TestRestMB.model.name}</h2>
-	
-	<div>
-		<p:commandLink styleClass="btn" value="Nova linha" action="#{TestRestMB.newData()}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit"  />
+	<div class="mural mural-explicativo">
+		<h4>Esta tela utiliza a API para fazer as operações. Dentro do ManagedBean 'TestRestMB' são feitas as chamadas para a API rest do modelo escolhido.</h4><br/><br/>  
+		
+		<span>Mas se preferir pode fazer as chamadas diretamente:</span>
+		<br/>
+		<br/>
+		<span>GET <h:outputLink value="#{request.contextPath}/ws/#{TestRestMB.model.name}" target="_blank">#{request.contextPath}/ws/#{TestRestMB.model.name}</h:outputLink> - Lista todos os elementos do Modelo '#{TestRestMB.model.name}'</span><br/>
+		<span>GET <h:outputLink value="#{request.contextPath}/ws/#{TestRestMB.model.name}/1" target="_blank">#{request.contextPath}/ws/#{TestRestMB.model.name}/{id}</h:outputLink> - Busca um registro do modelo '#{TestRestMB.model.name}' por id</span><br/>
+		
+		<br/>
+		<br/>
+		<span>Para testar as chamadas abaixo diretamente utilize alguma ferramenta como por exemplo o <a href="https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo" target="_blank">Advanced REST client</a> do google chrome:</span><br/><br/>
+		<span>POST #{request.contextPath}/ws/#{TestRestMB.model.name} - Cria um novo registro do modelo '#{TestRestMB.model.name}' (enviar um json no body da requisição)</span><br/>
+		<span>PUT #{request.contextPath}/ws/#{TestRestMB.model.name}/{id} - Edita um registro do modelo '#{TestRestMB.model.name}' (enviar um json no body da requisição)</span><br/>
+		<span>DELETE #{request.contextPath}/ws/#{TestRestMB.model.name}/{id} - Deleta um registo do modelo '#{TestRestMB.model.name}'</span><br/>
 	</div>
-
+	
 	<h:form id="form">
 
 		<p:dataTable value="#{TestRestMB.dataList}" var="data">
+			
+			<f:facet name="header">
+				RESTful API - #{TestRestMB.model.name}
+				<div style="float: left;">
+					<h:outputLink styleClass="btn" style="margin-right: 5px;" value="#{request.contextPath}/ws/#{TestRestMB.model.name}" target="_blank">Abrir</h:outputLink>
+				</div>
+				<div style="float: right;">
+					<p:commandLink styleClass="btn" value="Nova linha" action="#{TestRestMB.newData()}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit"  />
+				</div>
+				<div style="clear: both;" />
+			</f:facet>
 
 			<p:columnGroup type="header">
 				<p:row>
+					<p:column headerText="Abrir" width="70" />
 					<c:forEach var="field" items="#{TestRestMB.model.fields}">
 						<p:column>
 							<f:facet name="header">
@@ -37,9 +60,13 @@
 							</f:facet>
 						</p:column>
 					</c:forEach>
-					<p:column headerText="Editar" />
+					<p:column headerText="Editar" width="70" />
 				</p:row>
 			</p:columnGroup>
+			
+			<p:column>
+				<h:outputLink styleClass="btn" value="#{request.contextPath}/ws/#{TestRestMB.model.name}/#{data.get(TestRestMB.model.tableId.name)}" target="_blank">Abrir</h:outputLink>
+			</p:column>
 
 			<c:forEach var="field" items="#{TestRestMB.model.fields}" varStatus="status">
 				<p:column>
@@ -48,7 +75,7 @@
 			</c:forEach>
 			
 			<p:column>
-				<p:commandLink value="Editar" action="#{TestRestMB.edit(data)}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit" />
+				<p:commandLink styleClass="btn" value="Editar" action="#{TestRestMB.edit(data)}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit" />
 			</p:column>
 
 		</p:dataTable>
