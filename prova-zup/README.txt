@@ -47,7 +47,7 @@ Para executar a aplicação (Windows):
 
 		<subsystem xmlns="urn:jboss:domain:datasources:2.0">
             <datasources>
-                <xa-datasource jndi-name="java:jboss/datasources/LocalDS" pool-name="LocalDS" enabled="true" use-java-context="true">
+                <xa-datasource jndi-name="java:jboss/LocalDS" pool-name="LocalDS" enabled="true" use-java-context="true">
                     <xa-datasource-property name="ServerName">
                         localhost
                     </xa-datasource-property>

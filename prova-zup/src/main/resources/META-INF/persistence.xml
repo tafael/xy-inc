@@ -7,7 +7,7 @@
 
 	<persistence-unit name="LocalDSPU" transaction-type="JTA">
 
-		<jta-data-source>java:jboss/datasources/LocalDS</jta-data-source>
+		<jta-data-source>java:jboss/LocalDS</jta-data-source>
 
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 
@@ -16,7 +16,7 @@
 			<property name="hibernate.archive.autodetection" value="class" />
 
 			<!-- DADOS DA CONEXAO -->
-			<property name="hibernate.connection.datasource" value="java:jboss/datasources/LocalDS" />
+			<property name="hibernate.connection.datasource" value="java:jboss/LocalDS" />
 
 			<!-- OUTROS -->
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
