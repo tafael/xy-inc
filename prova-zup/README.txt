@@ -6,7 +6,11 @@ A arquitetura proposta foi a seguinte:
   * Sistema desenvolvido em JAVA.
   * Tecnologias utilizadas: PostgreSQL, WildFly 8 (Java EE 7), Maven, Hibernate, JSF, JAX-RS WS.
 
-Para executar a aplicação (Windows):
+
+Para testar diretamente o sistema acesse o link: http://54.244.253.76:8080/prova-zup/ com uma versão já implantada na WEB.
+
+
+Ou se preferir executar localmente a aplicação (Windows):
 
 - Baixar e instalar o PostgreSQL (a versão que utilizei foi: "postgresql-9.5.3-1-windows-x64"
 - Execute o PgAdmin e crie um banco da seguinte forma:
