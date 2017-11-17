@@ -68,9 +68,18 @@ public class PostgreSQLQueryGenerator implements QueryGenerator {
 		for (Field column : (List<Field>) CollectionUtils.subtract(_new.getFields(), _old.getFields())) {
 			statements.add("alter table " + _old.getName() + " add column " + getColumnStatement(column));
 		}
-		/*for (Field column : (List<Field>) CollectionUtils.intersection(_new.getFields(), _old.getFields())) {
-			// TODO
-		}*/
+		
+		for (Field oldColumn : _old.getFields()) {
+			for (Field newColumn : _new.getFields()) {
+				if (oldColumn.equals(newColumn)) {
+					// rename column
+					if (!oldColumn.getName().equals(newColumn.getName())) {
+						statements.add("alter table " + _old.getName() + " rename column " + oldColumn.getName() + " to " + newColumn.getName());
+					}
+				}
+			}
+		}
+
 		for (Field column : (List<Field>) CollectionUtils.subtract(_old.getFields(), _new.getFields())) {
 			statements.add("alter table " + _old.getName() + " drop column " + column.getName());
 		}

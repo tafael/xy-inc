@@ -21,7 +21,7 @@
 			<!-- OUTROS -->
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
 			<property name="hibernate.connection.autocommit" value="false" />
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 			<property name="current_session_context_class" value="jta" />
 		</properties>
 

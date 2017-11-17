@@ -15,6 +15,14 @@ import javax.ws.rs.core.MediaType;
 import com.prova.ws.client.GenericWSClient;
 import com.prova.ws.client.annotation.WebTarget;
 
+
+/**
+	GET /xxx - Lista todos os elementos do Modelo XXX
+	GET /xxx/{id} - Busca um registro do modelo XXX por id
+	POST /xxx - Cria um novo registro do modelo XXX
+	PUT /xxx/{id} - Edita um registro do modelo XXX
+	DELETE /xxx/{id} - Deleta um registo do modelo XXX
+*/
 @WebTarget("/")
 public interface IModelWS extends GenericWSClient {
 

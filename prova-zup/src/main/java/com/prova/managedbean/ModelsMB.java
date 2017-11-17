@@ -57,7 +57,13 @@ public class ModelsMB implements Serializable {
 
 	private boolean validate() {
 		if (!Utils.isValidSQLName(model.getName())) {
-			messagesMB.showMessage("Erro", "Nome inválido. Não pode haver espaços nem caracteres especiais.");
+			messagesMB.showMessage("Erro", "Nome inválido. O nome do modelo deve começar com uma letra. Não pode haver espaços nem caracteres especiais.");
+			return false;
+		}
+		
+		Model existingModel = applicationModels.getModelsMap().get(model.getName());
+		if (existingModel != null && !existingModel.equals(model)) {
+			messagesMB.showMessage("Erro", "Já existe um outro modelo com esse nome.");
 			return false;
 		}
 		return true;
@@ -86,25 +92,45 @@ public class ModelsMB implements Serializable {
 		this.editingField = true;
 	}
 
+	public boolean validateField() {
+		if (!Utils.isValidSQLName(field.getName())) {
+			messagesMB.showMessage("Erro", "Nome inválido. O nome do campo deve começar com uma letra. Não pode haver espaços nem caracteres especiais.");
+			return false;
+		}
+		if (!editingField && field.getName().equals("id")) {
+			messagesMB.showMessage("Erro", "O nome 'id' está reservado para o identificador do Modelo. Utilize outro nome para o campo.");
+			return false;
+		}
+		for (Field f : model.getFields()) {
+			if (field != f && field.getName().equals(f.getName())) {
+				messagesMB.showMessage("Erro", "Já existe um outro campo com esse nome.");
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void addField() {
-		// TODO validar o nome do field.
+		if (!validateField()) return;
 		this.model.getFields().add(field);
-		confirmField();
+		RequestContext.getCurrentInstance().update("formEdit");
+		RequestContext.getCurrentInstance().execute("PF('dlgEditField').hide();");
 	}
 
 	public void confirmField() {
+		if (!validateField()) return;
 		RequestContext.getCurrentInstance().update("formEdit");
 		RequestContext.getCurrentInstance().execute("PF('dlgEditField').hide();");
 	}
 
 	public void removeField() {
 		this.model.getFields().remove(field);
-		confirmField();
+		RequestContext.getCurrentInstance().update("formEdit");
+		RequestContext.getCurrentInstance().execute("PF('dlgEditField').hide();");
 	}
 
 	public void confirmSave() {
-		if (!validate())
-			return;
+		if (!validate()) return;
 		if (editing) {
 			messagesMB.showConfirmation("Salvar Model", "Deseja salvar as alterações feitas?", null, "#{ModelsMB.save()}");
 		} else {

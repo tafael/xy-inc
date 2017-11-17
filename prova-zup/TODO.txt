@@ -1,10 +1,8 @@
-- Validar nomes de modelos duplicados;
-- Validar nomes de campos duplicados no mesmo modelo;
+Melhorar
 
-Problemas
+- Criar testes unitários;
+
+Problemas:
 
 - Incluir novo campo not null quando já existem registros na tabela do modelo.
-- Editar um campo já existente não altera a tabela que representa o modelo.
 
-
-Criar testes unitários.

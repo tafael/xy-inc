@@ -8,6 +8,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import com.prova.dao.FieldDAO;
 import com.prova.dao.GenericDAO;
 import com.prova.dao.ModelDAO;
 import com.prova.model.Field;
@@ -24,6 +25,9 @@ public class ModelService extends GenericService<Model, Long> implements Seriali
 
 	@Inject
 	private ModelDAO modelDAO;
+	
+	@Inject
+	private FieldDAO fieldDAO;
 
 	@Inject
 	private FieldService fieldService;
@@ -35,6 +39,9 @@ public class ModelService extends GenericService<Model, Long> implements Seriali
 			Model oldModel = findById(model.getId());
 			modelDAO.detach(oldModel);
 			oldModel.setFields(fieldService.findByModel(oldModel));
+			for (Field field : oldModel.getFields()) {
+				fieldDAO.detach(field);
+			}
 			
 			fieldService.saveUpdateDelete(oldModel.getFields(), model.getFields());
 			

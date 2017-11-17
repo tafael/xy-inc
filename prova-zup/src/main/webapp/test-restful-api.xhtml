@@ -60,6 +60,7 @@
 							</f:facet>
 						</p:column>
 					</c:forEach>
+					<p:column headerText="Excluir" width="70" />
 					<p:column headerText="Editar" width="70" />
 				</p:row>
 			</p:columnGroup>
@@ -75,8 +76,14 @@
 			</c:forEach>
 			
 			<p:column>
+				<p:commandLink styleClass="btn-excluir" value="Excluir" action="#{TestRestMB.confirmDelete()}">
+					<f:setPropertyActionListener value="#{data}" target="#{TestRestMB.data}" />
+				</p:commandLink>
+			</p:column>
+			<p:column>
 				<p:commandLink styleClass="btn" value="Editar" action="#{TestRestMB.edit(data)}" oncomplete="PF('dlgEdit').show()" update=":dialogEdit" />
 			</p:column>
+			
 
 		</p:dataTable>
 		
@@ -106,7 +113,7 @@
 			</div>
 			<hr />
 			<div class="rodape-dialog">
-				<p:commandLink styleClass="btn-excluir" value="Excluir" action="#{TestRestMB.confirmDelete()}" rendered="#{TestRestMB.editing}" />
+				<p:commandLink styleClass="btn-vermelho" value="Excluir" action="#{TestRestMB.confirmDelete()}" rendered="#{TestRestMB.editing}" />
 				<h:outputLink styleClass="btn" value="javascript:void(0)" onclick="PF('dlgEdit').hide()">Cancelar</h:outputLink>
 				<p:commandLink styleClass="btn btn-primario" action="#{TestRestMB.confirmSave()}" value="Salvar" />
 			</div>

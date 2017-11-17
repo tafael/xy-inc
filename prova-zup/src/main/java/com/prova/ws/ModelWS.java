@@ -12,18 +12,6 @@ import com.prova.service.ModelService;
 import com.prova.util.Utils;
 import com.prova.ws.api.IModelWS;
 
-/**
- A partir desse cadastro os seguintes recursos REST para gerenciamento desse modelo
-deveriam estar disponíveis:
-
-GET /xxx - Lista todos os elementos do Modelo XXX
-GET /xxx/{id} - Busca um registro do modelo XXX por id
-
-POST /xxx - Cria um novo registro do modelo XXX
-PUT /xxx/{id} - Edita um registro do modelo XXX
-DELETE /xxx/{id} - Deleta um registo do modelo XXX
- * */
-
 @Path("/")
 public class ModelWS extends GenericWS implements IModelWS {
 
@@ -52,8 +40,8 @@ public class ModelWS extends GenericWS implements IModelWS {
 	}
 	
 	public String update(String modelName, Long id, Map<String, Object> data) {
-		data.put("id", id);
 		Model model = getModel(modelName);
+		data.put(model.getTableId().getName(), id);
 		Utils.convertDateTypes(model, data);
 		modelService.updateData(model, data);
 		return "success";

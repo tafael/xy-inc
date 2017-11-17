@@ -55,7 +55,7 @@ public class Field extends BaseModel implements Serializable {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name != null ? name.trim().toLowerCase() : null;
 	}
 
 	public TypeEnum getType() {
@@ -113,6 +113,11 @@ public class Field extends BaseModel implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Field [name=" + name + "]";
 	}
 
 }

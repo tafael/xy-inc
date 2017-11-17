@@ -22,7 +22,7 @@ public final class Utils {
 	public static boolean isValidSQLName(String name) {
 		if (name == null)
 			return false;
-		return name.matches("[0-9a-zA-Z_]+");
+		return name.matches("^[\\p{L}_][\\p{L}\\p{N}@$#_]{0,127}$");
 	}
 	
 	public static String getRequestParameter(String key) {

@@ -33,7 +33,7 @@ public class ModelDAO extends GenericDAOImpl<Model, Long> implements GenericDAO<
 	public Map<String, Object> findDataById(Model model, Long id) {
 		List<Map<String, Object>> params = new ArrayList<Map<String, Object>>();
 		Map<String, Object> params1 = new HashMap<String, Object>();
-		params1.put("id", id);
+		params1.put(model.getTableId().getName(), id);
 		params.add(params1);
 		String sql = queryGenerator.generateSelect(model, params);
 		SQLQuery query = openSession().createSQLQuery(sql);
