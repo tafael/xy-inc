@@ -125,7 +125,7 @@ public class ModelsMB implements Serializable {
 	}
 
 	public void delete() {
-		modelService.delete(model);
+		modelService.deleteModel(model);
 		loadModels();
 		RequestContext.getCurrentInstance().update("form");
 		RequestContext.getCurrentInstance().execute("PF('dlgEdit').hide();");

@@ -10,6 +10,8 @@ public interface QueryGenerator {
 	List<String> generateCreateTable(Model table);
 	
 	List<String> generateAlterTable(Model _old, Model _new);
+
+	List<String> generateDropTable(Model table);
 	
 	String generateSelect(Model table, List<Map<String, Object>> params);
 

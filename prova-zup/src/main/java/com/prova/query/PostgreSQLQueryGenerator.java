@@ -52,6 +52,14 @@ public class PostgreSQLQueryGenerator implements QueryGenerator {
 		return statements;
 	}
 
+	@Override
+	public List<String> generateDropTable(Model table) {
+		List<String> statements = new ArrayList<String>();
+		statements.add("drop table " + table.getName());
+		statements.add("drop sequence seq_" + table.getName());
+		return statements; 
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> generateAlterTable(Model _old, Model _new) {

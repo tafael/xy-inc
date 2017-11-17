@@ -53,7 +53,7 @@ public class ModelService extends GenericService<Model, Long> implements Seriali
 			id.setType(TypeEnum.INTEGER);
 			id.setNotNull(Boolean.TRUE);
 			id.setModel(newModel);
-			id = fieldService.saveOrUpdate(id);;
+			id = fieldService.saveOrUpdate(id);
 			
 			newModel.setTableId(id);
 			newModel = saveOrUpdate(newModel);
@@ -68,6 +68,11 @@ public class ModelService extends GenericService<Model, Long> implements Seriali
 
 			return newModel;
 		}
+	}
+
+	public void deleteModel(Model model) {
+		modelDAO.executeSQL(generator.generateDropTable(model));
+		delete(model);
 	}
 	
 	public Map<String, Object> findDataById(Model model, Long id) {
