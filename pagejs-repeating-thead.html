@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>report</title>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+    <script>
+        class RepeatingTableHeaders extends Paged.Handler {
+
+            constructor(chunker, polisher, caller) {
+                super(chunker, polisher, caller);
+                this.splitTablesRefs = [];
+            }
+
+            afterPageLayout(pageElement, page, breakToken, chunker) {
+                this.chunker = chunker;
+                this.splitTablesRefs = [];
+
+                if (breakToken) {
+                    const node = breakToken.node;
+                    const tables = this.findAllAncestors(node, "table");
+
+                    if (tables.length > 0) {
+                        this.splitTablesRefs = tables.map(t => t.dataset.ref);
+
+                        //checks if split inside thead and if so, set breakToken to next sibling element
+                        let thead = node.tagName === "THEAD" ? node : this.findFirstAncestor(node, "thead");
+                        if (thead) {
+                            breakToken.node = this.nodeAfter(thead, chunker.source);
+                        }
+
+                        this.hideEmptyTables(pageElement);
+                    }
+                }
+            }
+
+            hideEmptyTables(pageElement) {
+                this.splitTablesRefs.forEach(ref => {
+                    let table = pageElement.querySelector("[data-ref='" + ref + "']");
+                    let sourceBody = table.querySelector("tbody > tr");
+                    if (!sourceBody) {
+                        table.style.visibility = "hidden";
+                        table.style.position = "absolute";
+                        let lineSpacer = table.nextSibling;
+                        if (lineSpacer) {
+                            lineSpacer.style.visibility = "hidden";
+                            lineSpacer.style.position = "absolute";
+                        }
+                    }
+                });
+            }
+
+            findFirstAncestor(element, selector) {
+                while (element.parentNode && element.parentNode.nodeType === 1) {
+                    if (element.parentNode.matches(selector)) {
+                        return element.parentNode;
+                    }
+                    element = element.parentNode;
+                }
+                return null;
+            }
+
+            findAllAncestors(element, selector) {
+                const ancestors = [];
+                while (element.parentNode && element.parentNode.nodeType === 1) {
+                    if (element.parentNode.matches(selector)) {
+                        ancestors.unshift(element.parentNode);
+                    }
+                    element = element.parentNode;
+                }
+                return ancestors;
+            }
+
+            // The addition of repeating Table Headers is done here because this hook is triggered before overflow handling
+            layout(rendered, layout) {
+                this.splitTablesRefs.forEach(ref => {
+                    const renderedTable = rendered.querySelector("[data-ref='" + ref + "']");
+
+                    // this event can be triggered multiple times
+                    // added a flag repeated-headers to control when table headers already repeated in current page.
+                    if (!renderedTable.getAttribute("repeated-headers")) {
+                        const sourceTable = this.chunker.source.querySelector("[data-ref='" + ref + "']");
+                        this.repeatColgroup(sourceTable, renderedTable);
+                        this.repeatTHead(sourceTable, renderedTable);
+                        renderedTable.setAttribute("repeated-headers", true);
+                    }
+                });
+            }
+
+            repeatColgroup(sourceTable, renderedTable) {
+                let colgroup = sourceTable.querySelectorAll("colgroup");
+                let firstChild = renderedTable.firstChild;
+                colgroup.forEach((colgroup) => {
+                    let clonedColgroup = colgroup.cloneNode(true);
+                    renderedTable.insertBefore(clonedColgroup, firstChild);
+                });
+            }
+
+            repeatTHead(sourceTable, renderedTable) {
+                let thead = sourceTable.querySelector("thead");
+                let clonedThead = thead.cloneNode(true);
+                renderedTable.insertBefore(clonedThead, renderedTable.firstChild);
+            }
+
+            // copied this from pagedjs
+            nodeAfter(node, limiter) {
+                if (limiter && node === limiter) {
+                    return;
+                }
+                let significantNode = this.nextSignificantNode(node);
+                if (significantNode) {
+                    return significantNode;
+                }
+                if (node.parentNode) {
+                    while ((node = node.parentNode)) {
+                        if (limiter && node === limiter) {
+                            return;
+                        }
+                        significantNode = this.nextSignificantNode(node);
+                        if (significantNode) {
+                            return significantNode;
+                        }
+                    }
+                }
+            }
+
+            nextSignificantNode(sib) {
+                while ((sib = sib.nextSibling)) {
+                    if (!this.isIgnorable(sib)) return sib;
+                }
+                return null;
+            }
+
+            isIgnorable(node) {
+                return (node.nodeType === 8) || // A comment node
+                    ((node.nodeType === 3) && this.isAllWhitespace(node)); // a text node, all whitespace
+            }
+
+            isAllWhitespace(node) {
+                return !(/[^\t\n\r ]/.test(node.textContent));
+            }
+
+        }
+
+        Paged.registerHandlers(RepeatingTableHeaders);
+    </script>
+
+    <style>
+        @page {
+            size: A4;
+            margin: 20px 0 20px 0;
+
+            @bottom-right {
+                content: 'Page ' counter(page) ' of ' counter(pages);
+            }
+
+            bleed: 20px;
+        }
+
+        table.table-report > thead > tr > th.primary-header,
+        table.table-report > tbody > tr > th.primary-header,
+        table.table-report > tr > th.primary-header,
+        .primary-header {
+            background-color: #A6A6A6;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        div.primary-header,
+        div.secondary-header {
+            padding: 3px 5px;
+            margin-top: 20px;
+            border: 1px solid;
+        }
+
+        .secondary-header, .table-report-header {
+            background-color: #D9D9D9;
+            font-weight: bold;
+        }
+
+        table.table-report > thead > tr > th.secondary-header,
+        table.table-report > tbody > tr > th.secondary-header,
+        table.table-report > tr > th.secondary-header,
+        .secondary-header,
+        table.table-report > thead > tr > th.text-center,
+        table.table-report > tbody > tr > th.text-center,
+        table.table-report > tr > th.text-center,
+        table.table-report > tbody > tr > td.text-center,
+        table.table-report > tr > td.text-center,
+        .text-center {
+            text-align: center;
+        }
+
+        table.table-report {
+            width:100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table.table-report > thead > tr > th,
+        table.table-report > tbody > tr > th,
+        table.table-report > tbody > tr > td,
+        table.table-report > tr > th,
+        table.table-report > tr > td {
+            text-align: justify;
+            vertical-align: top;
+            margin: 0;
+            padding: 3px 5px;
+            border: 1px solid;
+        }
+        /** fix table border when table splits in two pages */
+        .pagedjs_pages > .pagedjs_page > .pagedjs_sheet > .pagedjs_pagebox > .pagedjs_area > div [data-split-to] > td:not([data-split-original="true"]) {
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<table class="table-report">
+    <colgroup>
+        <col style="width:5%">
+        <col style="width:60%">
+        <col style="width:15%">
+        <col style="width:20%">
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="4" class="secondary-header">ITEMS LIST</th>
+        </tr>
+        <tr style="background-color: #eeeeee">
+            <th class="text-center">ID</th><th>Item</th><th>Quant.</th><th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr style="color: blue; font-weight: bold">
+            <td class="text-center">2</td><td>Item 2</td><td>2</td><td>Unit 2</td>
+        </tr>
+        <tr style="color: red; font-weight: bold">
+            <td class="text-center">3</td><td>Item 3</td><td>3</td><td>Unit 3</td>
+        </tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+        <tr style="color: blue; font-weight: bold">
+            <td class="text-center">2</td><td>Item 2</td><td>2</td><td>Unit 2</td>
+        </tr>
+        <tr style="color: red; font-weight: bold">
+            <td class="text-center">3</td><td>Item 3</td><td>3</td><td>Unit 3</td>
+        </tr>
+        <tr><td class="text-center">1</td><td>Item 1</td><td>1</td><td>Unit 1</td></tr>
+    </tbody>
+</table>
+
+</body>
+</html>
